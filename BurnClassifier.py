@@ -1,21 +1,14 @@
-from Extract import init, clipTrainAndValidation, getFCData, createDataSet# todo import specific functions
-from model import init, train
+from Extract import (init, clipTrainAndValidation,
+                     getFCData, createDataSet, makeAndUploadData)# todo import specific functions
+from model import initModel,train,getTFRecord
+from ProcessImage import readData, makeBatch
 
 def main():
-    aerialImage, structurePoints, trainingPoly, validationPoly = init()
-    trainingImage, validationImage = clipTrainAndValidation(aerialImage, trainingPoly, validationPoly)
-    trainingPoints, validationPoints = getFCData(structurePoints, trainingPoly, validationPoly)
+    #makeAndUploadData()
 
-    createDataSet(trainingImage, trainingPoints,"training")
-    createDataSet(validationImage, validationPoints,"testing")
-
-    # todo change normalization value, if needed
-    model = initModel(keep_prob=0.5)
-    trainModel()
-
-    # todo more stuff with training and validation image
-
-
+    x, y = makeBatch()
+    model = initModel(0.3)
+    #train(model, len(y), x, y)
 
 
 if __name__ == "__main__":

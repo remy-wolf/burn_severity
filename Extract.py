@@ -2,7 +2,6 @@ import ee
 import folium
 import time
 
-
 def init():
 
     """
@@ -43,6 +42,8 @@ def init():
 
 
 
+
+
     return aerialImage, points, trainingPolygon, validationPolygon
 
 
@@ -78,7 +79,7 @@ def bufferPoints(feature):
             a bounding box for each feature
     """
 
-    return feature.buffer(5).bounds()
+    return feature.buffer(30).bounds()
 
 def setDamage0(feature):
     return feature.set('damage',0)
@@ -94,11 +95,7 @@ def separateLearningData(damageFilter, noDamageFilter, structurePoints, roiPoly)
 
     damagedStructs = structurePoints.filterBounds(roiPoly).filter(damageFilter)
 
-
     notDamagedStructs = structurePoints.filterBounds(roiPoly).filter(noDamageFilter)
-
-
-
 
     # Set Damage to binary value
     notDamagedStructs = notDamagedStructs.map(setDamage0)
@@ -115,7 +112,9 @@ def getFCData(structurePoints, trainingPoly, validationPoly):
     :return:
     """
 
+
     structurePoints = structurePoints.map(bufferPoints)
+
 
     # Create Filter objects that will be used inside the FeatureCollection filter method.
     # This filter will be able to sort through the DAMAGE column in the collection and
@@ -127,6 +126,7 @@ def getFCData(structurePoints, trainingPoly, validationPoly):
     trainingPoints   = separateLearningData(damageFilter, noDamageFilter, structurePoints, trainingPoly)
     validationPoints = separateLearningData(damageFilter, noDamageFilter, structurePoints, validationPoly)
 
+
     return trainingPoints, validationPoints
 
 
@@ -136,19 +136,15 @@ def getFCData(structurePoints, trainingPoly, validationPoly):
 def createDataSet(aerialImage, dataPoints, prefix):
 
 
-    # Sample the image at the points and add a random column.
-    aerialImage = aerialImage#.select(['b1', 'b2', 'b3'])
-
-    training = aerialImage.sampleRegions(
-        collection=dataPoints, properties=['damage'], scale=0.5)
+    trainingTable = ee.FeatureCollection()
 
 
-    exportTask = ee.batch.Export.image.toDrive(
-        aerialImage,
-        "Test export",
-        folder="batch_images",
-        fileNamePrefix=prefix,
-        fileFormat='GeoTIFF'
+    exportTask = ee.batch.Export.table.toDrive(
+        table = dataPoints,
+        description = "Test export",
+        folder="data",
+        fileNamePrefix=prefix+"_dataPoints",
+        fileFormat='TFRecord'
     )
 
     # Print all tasks.
@@ -165,40 +161,43 @@ def createDataSet(aerialImage, dataPoints, prefix):
 
 
 
+def startEEImageQueue(numOfPoints, allFeatures, folder):
+
+    for i in range(numOfPoints):
+        fileName = allFeatures[i]["id"]
+        geo = allFeatures[i]["geometry"]["coordinates"]
+
+        export_task = ee.batch.Export.image.toDrive(image=aerialImage.select(['b1', 'b2', 'b3']),
+                                                    description=fileName,
+                                                    fileNamePrefix = fileName,
+                                                    folder="TestImages",
+                                                    region=geo,
+                                                    scale=0.5)
+        # Print all tasks.
+        export_task.start()
+        print("Started id = ",fileName," ",numOfPoints-i-1," left")
 
 
-"""
-    def toDrive(image, description='myExportImageTask', folder=None,
-                fileNamePrefix=None, dimensions=None, region=None,
-                scale=None, crs=None, crsTransform=None,
-                maxPixels=None, shardSize=None, fileDimensions=None,
-                skipEmptyTiles=None, fileFormat=None, formatOptions=None,
-                **kwargs):
-"""
+# TODO: TEST IF WORKS AS EXPECTED
+def makeImageCollection(aerialImage, trainingPoints, testingPoints):
+    numOfPoints = len(trainingPoints.getInfo()["features"])
+    allFeatures = trainingPoints.getInfo()["features"]
+    startEEImageQueue(numOfPoints,allFeatures, "training")
+    numOfPoints = len(testingPoints.getInfo()["features"])
+    allFeatures = testingPoints.getInfo()["features"]
+    startEEImageQueue(numOfPoints,allFeatures, "testing")
 
 
 
-# todo insert stuff below into own function
-"""
 
-# Declare task
-export_task = ee.batch.Export.image.toDrive(
-                    fireImage, 
-                    'imageToDriveExample',
-                    "batch_images",
-                    None, 
-                    None, 
-                    None)
+def makeAndUploadData():
+    aerialImage, structurePoints, trainingPoly, validationPoly = init()
+    trainingImage, validationImage = clipTrainAndValidation(aerialImage, trainingPoly, validationPoly)
+    trainingPoints, validationPoints = getFCData(structurePoints, trainingPoly, validationPoly)
 
-# Print all tasks.
-print(ee.batch.Task.list())
+    #createDataSet(trainingImage, trainingPoints,"training")
+    #createDataSet(validationImage, validationPoints,"testing")
+    makeImageCollection(aerialImage, trainingPoints, validationPoints)
 
-# Poll the training task until it's done.
-import time
-while export_task.active():
-  print('Polling for task (id: {}).'.format(export_task.id))
-  time.sleep(30)
 
-print('Done with training export.')
-print(export_task.state)
-"""
+

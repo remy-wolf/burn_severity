@@ -1,30 +1,38 @@
-#todo fill this out
-INPUT_SHAPE = 1
-NORM_VAL = 128 # Normalize pixel values being passed in
+import tensorflow as tf
+from keras.layers import Lambda, Conv2D, Dropout, Dense, Flatten
+from keras.callbacks import ModelCheckpoint
+from keras import regularizers, optimizers, Sequential
+#todo CHANGE DIMENSIONS
+IMAGE_CHANNELS, IMAGE_HEIGHT, IMAGE_WIDTH  =  123, 123, 3
+INPUT_SHAPE = (IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS)
+NORM_VAL = 127.5 # Normalize pixel values being passed in
 # TODO FILL ABOVE
 
 
 
 
 
+def getTFRecord(fileName):
+    PATH = "C:\\Users\\Dillon\Desktop\\Senior_Project\\data\\{}.tfrecord.gz".format(fileName)
+    trainDataset = tf.data.TFRecordDataset(PATH, compression_type='GZIP')
+    print("-----------------------------------\n\n"+iter(trainDataset).next())
+
 
 
 def initModel(keep_prob):
-    # todo fit to classification model
-
     # Create the neural network model for the problem
     model = Sequential()
-    model.add(Lambda(lambda x: x/NORM_VAL, input_shape=INPUT_SHAPE))
-    model.add(Conv2D(64,  5, 5, activation='elu', subsample=(2, 2)))
-    model.add(Conv2D(128, 5, 5, activation='elu', subsample=(2, 2)))
-    model.add(Conv2D(256, 5, 5, activation='elu'))
+    model.add(Lambda(lambda x: x/NORM_VAL - 1, input_shape=INPUT_SHAPE))
+    model.add(Conv2D(64,  (3, 3), activation="elu", strides=(2, 2)))
+    model.add(Conv2D(64,  (3, 3), activation="elu", strides=(2, 2)))
+    model.add(Conv2D(256, (3, 3), activation="elu"))
     model.add(Dropout(keep_prob))
     model.add(Flatten())
-    model.add(Dense(200, activation='elu', bias=True))
-    model.add(Dense(100, activation='elu', bias=True))
-    model.add(Dense(50, activation='elu', bias=True))
-    model.add(Dense(10, activation='elu', bias=True))
-    model.add(Dense(1, activation='softmax'))
+    model.add(Dense(200, activation="elu", use_bias=True))
+    model.add(Dense(100, activation="elu", use_bias=True))
+    model.add(Dense(50, activation="elu", use_bias=True))
+    model.add(Dense(10, activation="elu", use_bias=True))
+    model.add(Dense(2, activation="softmax"))
 
     return model
 
@@ -32,9 +40,10 @@ def initModel(keep_prob):
 
 
 
-def train(model, batch_size, x_train, y_train, x_valid, y_valid):
+def train(model, batch_size, x_train, y_train, x_valid = None, y_valid= None):
 
     # todo fill values below
+    split = 0.7
     epochs = 10
     samples_per_epoch = 500 # todo correct this
     learningRate = 1.0e-4
@@ -42,13 +51,12 @@ def train(model, batch_size, x_train, y_train, x_valid, y_valid):
 
 
     # Get ipnput and compile
-    checkpoint = ModelCheckpoint('model-{epoch:02d}.h5', monitor='val_loss', verbose=0, save_best_only=False,
-                                 mode='auto')
+    checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
 
-    model.compile(loss='mean_squared_error', optimizer = optimizers.Nadam(lr=learningRate))
-    model.fit_generator(INSERT_BATCH_HERE, samples_per_epoch,
-                        epochs, max_q_size=1, validation_data=INSERT_VALIDATION_BATCH_HERE,
-                        nb_val_samples=len(x_valid), callbacks=[checkpoint], verbose=1)
+    model.compile(loss='binary_crossentropy', optimizer = optimizers.Nadam(lr=learningRate))
+
+    fit(x=x_train, y=y_train, batch_size=batch_size, epochs=epochs, verbose=1, callbacks=checkpoint,
+        validation_split=split, initial_epoch=0 , max_queue_size=10, use_multiprocessing=True)
 
 
 

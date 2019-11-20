@@ -1,2 +1,5 @@
 .idea
 __pychache__
+data
+testImages
+training_images
