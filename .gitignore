@@ -1,5 +1,5 @@
-.idea
-__pychache__
-data
-testImages
-training_images
+.idea/
+__pycache__/
+data/
+testImages/
+training_images/
