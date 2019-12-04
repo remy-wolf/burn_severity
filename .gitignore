@@ -3,3 +3,13 @@ __pycache__/
 data/
 testImages/
 training_images/
+model-01.h5
+model-02.h5
+model-03.h5
+model-04.h5
+model-05.h5
+model-06.h5
+model-07.h5
+model-08.h5
+model-09.h5
+model-10.h5

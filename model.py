@@ -4,6 +4,9 @@ from keras.callbacks import ModelCheckpoint
 from keras import regularizers, optimizers, Sequential
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
+
+
+
 #todo CHANGE DIMENSIONS
 IMAGE_CHANNELS, IMAGE_WIDTH, IMAGE_HEIGHT  =  3, 123, 123
 INPUT_SHAPE = (IMAGE_CHANNELS, IMAGE_WIDTH, IMAGE_HEIGHT)
@@ -42,27 +45,22 @@ def initModel(keep_prob):
 
 
 
-def train(model, batch_size, x_train, y_train, x_valid = None, y_valid= None):
-
-    # todo fill values below
-    split = 0.7
-    epochs = 10
-    samples_per_epoch = 500 # todo correct this
-    learningRate = 1.0e-4
-    # todo fill values above
-
-
-    y_train = to_categorical(y_train, num_classes=2, dtype='float32')
+def train(model, x, y, split, batch_size, learningRate, epochs):
 
 
 
-    # Get ipnput and compile
+    y = to_categorical(y, num_classes=2)
+
+
+
+    # Get input and compile
     checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
 
     model.compile(loss='binary_crossentropy', optimizer = optimizers.Nadam(lr=learningRate))
 
-    model.fit(x=x_train, y=y_train, batch_size=batch_size, epochs=epochs, verbose=1, callbacks=checkpoint,
-        validation_split=split, initial_epoch=0 , max_queue_size=10, use_multiprocessing=True)
+    print("\n\n\n------------------Fit--------------------------------------\n\n\n")
+    model.fit(x=x, y=y, epochs=epochs,validation_split=split, batch_size=batch_size, verbose=1, callbacks=[checkpoint])
+
 
 
 

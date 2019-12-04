@@ -40,11 +40,9 @@ def init():
     bands = ['b1', 'b2', 'b3']
     points = ee.FeatureCollection("users/geofffricker/PostFirePoints")
 
-
-
-
-
     return aerialImage, points, trainingPolygon, validationPolygon
+
+
 
 
 
