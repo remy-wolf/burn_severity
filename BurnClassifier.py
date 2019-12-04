@@ -8,7 +8,7 @@ def main():
 
     x, y = makeBatch()
     model = initModel(0.3)
-    #train(model, len(y), x, y)
+    train(model, len(y), x, y)
 
 
 if __name__ == "__main__":

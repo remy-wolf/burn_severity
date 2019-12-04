@@ -6,14 +6,16 @@ import json
 
 
 # Reads working directory and outputs list of file paths + fileIDs
-def readWordkingDir(workingDir, idDict):
+def readWorkingDir(workingDir, idDict):
     fileNames = [f for f in listdir(workingDir) if isfile(join(workingDir, f))]
     damageList = []
     imagePaths = []
     for key in idDict.keys():
-        if key in fileNames:
+        s = key+".tif"
+
+        if s in fileNames:
             damageList.append(idDict[key])
-            imagePaths.append(join(workingDir,key))
+            imagePaths.append(join(workingDir,s))
 
     return imagePaths, damageList
 
@@ -44,7 +46,7 @@ def makeBatch():
     images = []
     workingDirectory = "C:\\Users\\Dillon\\Desktop\\Senior_Project"
     idDict = readData(workingDirectory+"\\data\\data_points.geojson")
-    imagePaths, damageList = readWordkingDir(workingDirectory+"\\training_Images", idDict)
+    imagePaths, damageList = readWorkingDir(workingDirectory+"\\training_Images", idDict)
 
     for path in imagePaths:
         image = gdal.Open(path)
@@ -56,11 +58,9 @@ def makeBatch():
             print(npImage.shape)
 
 
-        npImage = np.resize(npImage, (123, 123, 3))
-
+        npImage = np.resize(npImage, (3, 123, 123))
         images.append(npImage)
 
 
-    return images, np.array(damageList)
+    return np.array(images), np.array(damageList)
 
-(makeBatch())
