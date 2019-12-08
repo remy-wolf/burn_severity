@@ -42,11 +42,11 @@ def agument():
 
 
 
-def makeBatch():
+def makeBatch(workingDirectory,idDictPath, imgsPath):
     images = []
-    workingDirectory = "C:\\Users\\Dillon\\Desktop\\Senior_Project"
-    idDict = readData(workingDirectory+"\\data\\data_points.geojson")
-    imagePaths, damageList = readWorkingDir(workingDirectory+"\\training_Images", idDict)
+    workingDirectory = workingDirectory
+    idDict = readData(idDictPath)
+    imagePaths, damageList = readWorkingDir(imgsPath, idDict)
 
     for path in imagePaths:
         image = gdal.Open(path)

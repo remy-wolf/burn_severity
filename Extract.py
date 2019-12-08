@@ -159,7 +159,7 @@ def createDataSet(aerialImage, dataPoints, prefix):
 
 
 
-def startEEImageQueue(numOfPoints, allFeatures, folder):
+def startEEImageQueue(aerialImage, numOfPoints, allFeatures, folder):
 
     for i in range(numOfPoints):
         fileName = allFeatures[i]["id"]
@@ -168,7 +168,7 @@ def startEEImageQueue(numOfPoints, allFeatures, folder):
         export_task = ee.batch.Export.image.toDrive(image=aerialImage.select(['b1', 'b2', 'b3']),
                                                     description=fileName,
                                                     fileNamePrefix = fileName,
-                                                    folder="TestImages",
+                                                    folder=folder,
                                                     region=geo,
                                                     scale=0.5)
         # Print all tasks.
@@ -176,14 +176,17 @@ def startEEImageQueue(numOfPoints, allFeatures, folder):
         print("Started id = ",fileName," ",numOfPoints-i-1," left")
 
 
-# TODO: TEST IF WORKS AS EXPECTED
+
 def makeImageCollection(aerialImage, trainingPoints, testingPoints):
+    """
     numOfPoints = len(trainingPoints.getInfo()["features"])
     allFeatures = trainingPoints.getInfo()["features"]
-    startEEImageQueue(numOfPoints,allFeatures, "training")
+    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "training")
+    """
+
     numOfPoints = len(testingPoints.getInfo()["features"])
     allFeatures = testingPoints.getInfo()["features"]
-    startEEImageQueue(numOfPoints,allFeatures, "testing")
+    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "validation_data")
 
 
 

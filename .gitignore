@@ -1,7 +1,7 @@
 .idea/
 __pycache__/
 data/
-testImages/
+testing_Images/
 training_images/
 model-01.h5
 model-02.h5
@@ -13,3 +13,4 @@ model-07.h5
 model-08.h5
 model-09.h5
 model-10.h5
+validation_data-20191204T183555Z-001.zip
