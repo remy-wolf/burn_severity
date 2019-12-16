@@ -86,7 +86,6 @@ def setDamage1(feature):
 
 def separateLearningData(damageFilter, noDamageFilter, structurePoints, roiPoly):
 
-    # todo comment this function
 
     damagedStructs = structurePoints.filterBounds(roiPoly).filter(damageFilter)
 
@@ -114,12 +113,8 @@ def getAllFCData(structurePoints):
 
 
 
-# todo fill out docstring for processImage function
 def getFCData(structurePoints, trainingPoly, validationPoly):
-    """
-    f
-    :return:
-    """
+
     structurePoints = structurePoints.map(bufferPoints)
 
 
