@@ -17,6 +17,8 @@ def readWorkingDir(workingDir, idDict):
             damageList.append(idDict[key])
             imagePaths.append(join(workingDir,s))
 
+
+
     return imagePaths, damageList
 
 
@@ -31,34 +33,40 @@ def readData(filePath):
     for feature in data:
         returnData[feature["id"]] = feature["properties"]["damage"]
 
+
     return returnData
 
 
 
-def agument():
-    pass
 
 
 
 
-
-def makeBatch(workingDirectory,idDictPath, imgsPath):
+def makeBatch(idDictPath, imgsPath):
     images = []
-    workingDirectory = workingDirectory
     idDict = readData(idDictPath)
     imagePaths, damageList = readWorkingDir(imgsPath, idDict)
 
     for path in imagePaths:
+        # load tiff image
         image = gdal.Open(path)
+        # convert image to numpy array
         npImage = np.array(image.ReadAsArray())
 
+        # D  W  H
+        # -1 1  0
+        npImage = npImage.transpose((2,1,0))
+
+
         try:
-            assert npImage.shape[0]==3 and (npImage.shape[1]==122 or npImage.shape[1]==123) and (npImage.shape[2]==122 or npImage.shape[2]==123)
+            # Ensure that shape conditions are met
+            assert npImage.shape[2]==3 and (npImage.shape[1]==122 or npImage.shape[1]==123) and (npImage.shape[0]==122 or npImage.shape[0]==123)
+            pass
         except:
             print(npImage.shape)
 
 
-        npImage = np.resize(npImage, (3, 123, 123))
+        npImage = np.resize(npImage, (123, 123, 3))
         images.append(npImage)
 
 

@@ -32,13 +32,10 @@ def init():
     [-121.59506929487134,39.78571339763988],
     [-121.59506929487134,39.78155804409371]])
 
-
     aerialImage = ee.Image('users/brendanpalmieri/aerialMosaic_resample_int16')
 
-
-    # todo make sure bands should be attached to feature collection and not imagery
-    bands = ['b1', 'b2', 'b3']
     points = ee.FeatureCollection("users/geofffricker/PostFirePoints")
+
 
     return aerialImage, points, trainingPolygon, validationPolygon
 
@@ -102,6 +99,20 @@ def separateLearningData(damageFilter, noDamageFilter, structurePoints, roiPoly)
     return notDamagedStructs.merge(damagedStructs)
 
 
+def getAllFCData(structurePoints):
+    damageFilter = ee.Filter.eq('DAMAGE', 'Destroyed (>50%)')
+    noDamageFilter = ee.Filter.eq("DAMAGE", "No Damage")
+
+    damagedStructs = structurePoints.filter(damageFilter)
+    notDamagedStructs = structurePoints.filter(noDamageFilter)
+
+    # Set Damage to binary value
+    notDamagedStructs = notDamagedStructs.map(setDamage0)
+    damagedStructs = damagedStructs.map(setDamage1)
+
+    return notDamagedStructs.merge(damagedStructs)
+
+
 
 # todo fill out docstring for processImage function
 def getFCData(structurePoints, trainingPoly, validationPoly):
@@ -109,8 +120,6 @@ def getFCData(structurePoints, trainingPoly, validationPoly):
     f
     :return:
     """
-
-
     structurePoints = structurePoints.map(bufferPoints)
 
 
@@ -121,40 +130,16 @@ def getFCData(structurePoints, trainingPoly, validationPoly):
     damageFilter = ee.Filter.eq('DAMAGE',  'Destroyed (>50%)')
     noDamageFilter = ee.Filter.eq("DAMAGE", "No Damage")
 
-    trainingPoints   = separateLearningData(damageFilter, noDamageFilter, structurePoints, trainingPoly)
-    validationPoints = separateLearningData(damageFilter, noDamageFilter, structurePoints, validationPoly)
-
+    trainingPoints = getAllFCData(structurePoints)
+    #trainingPoints   = separateLearningData(damageFilter, noDamageFilter, structurePoints, trainingPoly)
+    #validationPoints = separateLearningData(damageFilter, noDamageFilter, structurePoints, validationPoly)
+    validationPoints = None
 
     return trainingPoints, validationPoints
 
 
 
 
-
-def createDataSet(aerialImage, dataPoints, prefix):
-
-
-    trainingTable = ee.FeatureCollection()
-
-
-    exportTask = ee.batch.Export.table.toDrive(
-        table = dataPoints,
-        description = "Test export",
-        folder="data",
-        fileNamePrefix=prefix+"_dataPoints",
-        fileFormat='TFRecord'
-    )
-
-    # Print all tasks.
-    print(ee.batch.Task.list())
-    exportTask.start()
-    # Poll the training task until it's done.
-    while exportTask.active():
-        print('Polling for task (id: {}, state: {}).'.format(exportTask.id, exportTask.state))
-        time.sleep(30)
-
-    print('Done with training export.')
-    print(exportTask.state)
 
 
 
@@ -170,25 +155,25 @@ def startEEImageQueue(aerialImage, numOfPoints, allFeatures, folder):
                                                     fileNamePrefix = fileName,
                                                     folder=folder,
                                                     region=geo,
-                                                    scale=0.5)
+                                                    scale=0.25)
         # Print all tasks.
         export_task.start()
         print("Started id = ",fileName," ",numOfPoints-i-1," left")
 
 
 
+
 def makeImageCollection(aerialImage, trainingPoints, testingPoints):
-    """
+
     numOfPoints = len(trainingPoints.getInfo()["features"])
     allFeatures = trainingPoints.getInfo()["features"]
-    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "training")
-    """
+    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "0.25_DATA/training_data_scale_0.25")
 
+    """
     numOfPoints = len(testingPoints.getInfo()["features"])
     allFeatures = testingPoints.getInfo()["features"]
-    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "validation_data")
-
-
+    startEEImageQueue(aerialImage, numOfPoints,allFeatures, "0.25_DATA/validation_data_scale_0.25")
+    """
 
 
 def makeAndUploadData():
@@ -196,8 +181,9 @@ def makeAndUploadData():
     trainingImage, validationImage = clipTrainAndValidation(aerialImage, trainingPoly, validationPoly)
     trainingPoints, validationPoints = getFCData(structurePoints, trainingPoly, validationPoly)
 
-    #createDataSet(trainingImage, trainingPoints,"training")
-    #createDataSet(validationImage, validationPoints,"testing")
+    #allPoints = getAllFCData(structurePoints)
+    #makeImageCollection(aerialImage, allPoints, structurePoints)
+
     makeImageCollection(aerialImage, trainingPoints, validationPoints)
 
 
