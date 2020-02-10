@@ -1,6 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import tensorflow as tf
+#import tensorflow as tf
 from keras.layers import Lambda, Conv2D, Dropout, Dense, Flatten
 from keras.callbacks import ModelCheckpoint
 from keras import regularizers, optimizers, Sequential
@@ -67,26 +67,39 @@ def initModel(keep_prob, input_shape):
 
 
 
-def train(model, x, y, num_samples, batch_size, learningRate, epochs):
-    plot_model(model, to_file='model.png')
+def train(model, dir, input_shape, classes, num_samples, batch_size, learningRate, epochs):
+    # plot_model(model, to_file='model.png')
     # [no_damage, damage]
-    y = to_categorical(y, num_classes=2)
+    #y = to_categorical(y, num_classes=2)
     steps_per_epoch = ceil(num_samples/batch_size)
 
     # Image augmentation for adding varied image data to the set
-    datagen = ImageDataGenerator(
-        featurewise_center = True,
+    train_batches = ImageDataGenerator(
+        #featurewise_center = True,
         rotation_range = 15,
         width_shift_range = 0.1,
         height_shift_range = 0.1,
         horizontal_flip = True,
-        vertical_flip = True)
+        vertical_flip = True).flow_from_directory(
+        directory = dir + "train_imgs/",
+        target_size = (input_shape[0], input_shape[1]),
+        classes = classes,
+        batch_size = batch_size)
 
-
+    valid_batches = ImageDataGenerator(
+        #featurewise_center = True,
+        rotation_range = 15,
+        width_shift_range = 0.1,
+        height_shift_range = 0.1,
+        horizontal_flip = True,
+        vertical_flip = True).flow_from_directory(
+        directory = dir + "valid_imgs/",
+        target_size = (input_shape[0], input_shape[1]),
+        classes = classes,
+        batch_size = batch_size)
+        
     # compute quantities required for featurewise normalization
     # (std, mean, and principal components if ZCA whitening is applied)
-    datagen.fit(x)
-
 
     # Get input and compile
     checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
@@ -97,11 +110,12 @@ def train(model, x, y, num_samples, batch_size, learningRate, epochs):
                   metrics=['acc'])
 
     # Set model hyper-parameters and train
-    history = model.fit_generator(datagen.flow(x, y, batch_size=batch_size),
+    history = model.fit_generator(
+                        train_batches,
                         steps_per_epoch = steps_per_epoch,
                         epochs = epochs,
                         class_weight=[12,1],
-                        validation_data=datagen.flow(x, y, batch_size=batch_size),
+                        validation_data=valid_batches,
                         callbacks=[checkpoint])
 
     plotTrainingHistory(history)

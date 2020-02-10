@@ -1,6 +1,7 @@
 .idea/
 __pycache__/
 data/
+legacy/
 testing_Images/
 training_images/
 model-01.h5
