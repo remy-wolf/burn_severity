@@ -80,4 +80,4 @@ def makeAndUploadData(points, polygon, filename):
     startEEImageQueue(points, DRIVE_FOLDER, filename)
 
 if __name__ == "__main__":
-    makeAndUploadData(POINTS, TRAINING_POLY, "training_table")
+    makeAndUploadData(POINTS, VALID_POLY, "validation_table")

@@ -1,4 +1,4 @@
-from Extract import (init, makeAndUploadData)
+from Extract import makeAndUploadData
 from model import initModel, train, runModel
 #from ProcessImage import readData, makeBatch
 
