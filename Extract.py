@@ -3,19 +3,25 @@ import ee
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"
 POINTS = "users/geofffricker/PostFirePoints"
 
-TRAINING_POLY = [
+TRAINING = {
+    "filename": "train_table",
+    "polygon": [
     [-121.61246009040491, 39.76224814367828],
     [-121.59046597648279, 39.76224814367828],
     [-121.59046597648279, 39.76652011837134],
     [-121.61246009040491, 39.76652011837134],
     [-121.61246009040491, 39.76224814367828]]
-    
-VALID_POLY = [
+}
+
+VALID = {
+    "filename:" "valid_table",
+    "polygon": [
     [-121.59506929487134,39.78155804409371],
     [-121.58609998792554,39.78155804409371],
     [-121.58609998792554,39.78571339763988],
     [-121.59506929487134,39.78571339763988],
     [-121.59506929487134,39.78155804409371]]
+}
     
 DRIVE_FOLDER = "deep_gis"
 
@@ -73,11 +79,11 @@ def clipImgs(feature):
                 .set('damage', feature.getNumber('damage')))
                 
 
-def makeAndUploadData(points, polygon, filename):
+def makeAndUploadData(points, folder, dataset):
     ee.Initialize()
-    polygon = ee.Geometry.Polygon(polygon)
+    polygon = ee.Geometry.Polygon(dataset["polygon"])
     points = filterPoints(ee.FeatureCollection(points), polygon)
-    startEEImageQueue(points, DRIVE_FOLDER, filename)
+    startEEImageQueue(points, folder, dataset["filename"])
 
 if __name__ == "__main__":
-    makeAndUploadData(POINTS, VALID_POLY, "validation_table")
+    makeAndUploadData(POINTS, VALID)

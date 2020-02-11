@@ -5,8 +5,17 @@ from PIL import Image
 
 INPUT_SHAPE = (169, 169, 3)
 DATA_DIRECTORY = "data/"
-DEST_FOLDER = "valid_imgs/"
-SOURCE = "valid_table.kml"
+
+TRAINING = {
+    "source": "train_table",
+    "dest_folder": "train_imgs/"
+}
+
+VALID = {
+    "source": "valid_table",
+    "dest_folder": "valid_imgs/"
+}
+
 #linear interpolation
 
 """ Each band is a (roughly) 170 x 170 matrix of pixels. In the .kml file, this is stored as a string.
@@ -16,11 +25,12 @@ SOURCE = "valid_table.kml"
     
     #right now we assume the data is formatted nicely. may need to add error checking in the future
     
-def processKML(kml_data, dest_folder, input_shape):
+def processKML(dataset, input_shape):
+    kml_data = DATA_DIRECTORY + dataset["source"]
     with open(kml_data) as kml:
         table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
         for img in table:
-            createImg(img, dest_folder, input_shape)
+            createImg(img, DATA_DIRECTORY + dataset["dest_folder"], input_shape)
         kml.close()
  
 def createImg(img_data, dest_folder, input_shape):
@@ -49,4 +59,4 @@ def createImg(img_data, dest_folder, input_shape):
     Image.fromarray(img_array).save(img_folder + img_data['ExtendedData']['Data'][0]['value'] + ".jpeg") # id of the image
     
 if __name__ == "__main__":
-    processKML(DATA_DIRECTORY + SOURCE, DATA_DIRECTORY + DEST_FOLDER, INPUT_SHAPE)
+    processKML(TRAINING, INPUT_SHAPE)
