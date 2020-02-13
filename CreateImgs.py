@@ -40,7 +40,7 @@ def createImg(img_data, dest_folder, input_shape, classes):
     img_folder = os.path.join(dest_folder, classes[int(img_data['ExtendedData']['Data'][1]['value'])]) # place image into no_damage and damage folders
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
-    Image.fromarray(img_array).save(img_folder + img_data['ExtendedData']['Data'][0]['value'] + ".jpeg") # id of the image
+    Image.fromarray(img_array).save(os.path.join(img_folder, img_data['ExtendedData']['Data'][0]['value']) + ".jpeg") # id of the image
     
 if __name__ == "__main__":
     processKML(DATASETS["train"], INPUT_SHAPE, CLASSES)
