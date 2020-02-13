@@ -67,7 +67,7 @@ def initModel(keep_prob, input_shape):
 
 
 
-def train(model, dir, input_shape, classes, num_samples, batch_size, learningRate, epochs):
+def train(model, dir, input_shape, classes, num_samples, batch_size, learningRate, epochs, weights):
     # plot_model(model, to_file='model.png')
     # [no_damage, damage]
     #y = to_categorical(y, num_classes=2)
@@ -114,7 +114,7 @@ def train(model, dir, input_shape, classes, num_samples, batch_size, learningRat
                         train_batches,
                         steps_per_epoch = steps_per_epoch,
                         epochs = epochs,
-                        class_weight=[12,1],
+                        class_weight=weights,
                         validation_data=valid_batches,
                         callbacks=[checkpoint])
 
