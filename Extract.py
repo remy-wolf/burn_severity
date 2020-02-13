@@ -1,29 +1,5 @@
+from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER
 import ee
-
-AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"
-POINTS = "users/geofffricker/PostFirePoints"
-
-TRAINING = {
-    "filename": "train_table",
-    "polygon": [
-    [-121.61246009040491, 39.76224814367828],
-    [-121.59046597648279, 39.76224814367828],
-    [-121.59046597648279, 39.76652011837134],
-    [-121.61246009040491, 39.76652011837134],
-    [-121.61246009040491, 39.76224814367828]]
-}
-
-VALID = {
-    "filename:" "valid_table",
-    "polygon": [
-    [-121.59506929487134,39.78155804409371],
-    [-121.58609998792554,39.78155804409371],
-    [-121.58609998792554,39.78571339763988],
-    [-121.59506929487134,39.78571339763988],
-    [-121.59506929487134,39.78155804409371]]
-}
-    
-DRIVE_FOLDER = "deep_gis"
 
 def bufferPoints(feature):
     """
@@ -86,4 +62,4 @@ def makeAndUploadData(points, folder, dataset):
     startEEImageQueue(points, folder, dataset["filename"])
 
 if __name__ == "__main__":
-    makeAndUploadData(POINTS, VALID)
+    makeAndUploadData(POINTS, DRIVE_FOLDER, DATASETS["train"])

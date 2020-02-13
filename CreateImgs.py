@@ -1,20 +1,8 @@
+from Constants import INPUT_SHAPE, DATASETS, DATA_FOLDER
 import xmltodict
 import os
 import numpy as np
 from PIL import Image
-
-INPUT_SHAPE = (169, 169, 3)
-DATA_DIRECTORY = "data/"
-
-TRAINING = {
-    "source": "train_table",
-    "dest_folder": "train_imgs/"
-}
-
-VALID = {
-    "source": "valid_table",
-    "dest_folder": "valid_imgs/"
-}
 
 #linear interpolation
 
@@ -26,11 +14,11 @@ VALID = {
     #right now we assume the data is formatted nicely. may need to add error checking in the future
     
 def processKML(dataset, input_shape):
-    kml_data = DATA_DIRECTORY + dataset["source"]
+    kml_data = DATA_FOLDER + dataset["filename"] + ".kml"
     with open(kml_data) as kml:
         table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
         for img in table:
-            createImg(img, DATA_DIRECTORY + dataset["dest_folder"], input_shape)
+            createImg(img, dataset["dest_folder"], input_shape)
         kml.close()
  
 def createImg(img_data, dest_folder, input_shape):
@@ -59,4 +47,4 @@ def createImg(img_data, dest_folder, input_shape):
     Image.fromarray(img_array).save(img_folder + img_data['ExtendedData']['Data'][0]['value'] + ".jpeg") # id of the image
     
 if __name__ == "__main__":
-    processKML(TRAINING, INPUT_SHAPE)
+    processKML(DATASETS["valid"], INPUT_SHAPE)

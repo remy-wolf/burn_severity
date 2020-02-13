@@ -1,14 +1,8 @@
 from Extract import makeAndUploadData
 from model import initModel, train, runModel
 #from ProcessImage import readData, makeBatch
-
-DATA_FOLDER = "data/"
-INPUT_SHAPE = (169, 169, 3)
-CLASSES = ['damage', 'no_damage']
-BATCH_SIZE = 128
-LEARNING_RATE = 5e-5
-NUM_EPOCHS = 100
-NUM_SAMPLES = 20000
+from Constants import DATA_FOLDER, INPUT_SHAPE, CLASSES, NUM_SAMPLES, BATCH_SIZE, LEARNING_RATE, NUM_EPOCHS
+import sys
 
 def main():
     model = initModel(0.5, INPUT_SHAPE)
@@ -44,5 +38,7 @@ def main():
 
     #runModel(workingDirectory, x_test, y_test, x_train, y_train)
 
+#steps: table -> imgs -> train -> test
 if __name__ == "__main__":
+"""Commands: python BurnClassifier.py create | train | test"""
     main()
