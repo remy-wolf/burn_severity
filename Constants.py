@@ -4,12 +4,12 @@ DRIVE_FOLDER = "deep_gis"
 
 # keras inputs
 INPUT_SHAPE = (169, 169, 3)
-CLASSES = ['damage', 'no_damage']
+CLASSES = ['no_damage', 'damage']
 BATCH_SIZE = 128
 LEARNING_RATE = 5e-5
 NUM_EPOCHS = 100
 NUM_SAMPLES = 20000
-WEIGHTS = [1, 10]
+WEIGHTS = [10, 1]
 
 # earth engine assets
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"

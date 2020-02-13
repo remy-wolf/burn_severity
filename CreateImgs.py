@@ -1,4 +1,4 @@
-from Constants import INPUT_SHAPE, DATASETS, DATA_FOLDER
+from Constants import INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
 import xmltodict
 import os
 import numpy as np
@@ -13,15 +13,15 @@ from PIL import Image
     
     #right now we assume the data is formatted nicely. may need to add error checking in the future
     
-def processKML(dataset, input_shape):
+def processKML(dataset, input_shape, classes):
     kml_data = DATA_FOLDER + dataset["filename"] + ".kml"
     with open(kml_data) as kml:
         table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
         for img in table:
-            createImg(img, dataset["dest_folder"], input_shape)
+            createImg(img, dataset["dest_folder"], input_shape, classes)
         kml.close()
  
-def createImg(img_data, dest_folder, input_shape):
+def createImg(img_data, dest_folder, input_shape, classes):
     bands = np.empty(input_shape[2], dtype = np.object)
     for cur_band in range(len(bands)):
         data = img_data['ExtendedData']['Data'][cur_band + 2]['value'] # the original unformatted string from the kml file
@@ -37,14 +37,10 @@ def createImg(img_data, dest_folder, input_shape):
             cur_row += 1
         bands[cur_band] = band
     img_array = np.dstack([bands[2], bands[0], bands[1]]).astype(np.uint8) # for some reason, bands are stored b2, b3, b1 in the kml file, so we need to reorder them
-    img_folder = dest_folder
-    if (img_data['ExtendedData']['Data'][1]['value'] == "0"):
-        img_folder = img_folder + "no_damage/"
-    else:
-        img_folder = img_folder + "damage/"
+    img_folder = dest_folder + classes[int(img_data['ExtendedData']['Data'][1]['value'])] + "/" # place image into no_damage and damage folders
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
     Image.fromarray(img_array).save(img_folder + img_data['ExtendedData']['Data'][0]['value'] + ".jpeg") # id of the image
     
 if __name__ == "__main__":
-    processKML(DATASETS["valid"], INPUT_SHAPE)
+    processKML(DATASETS["train"], INPUT_SHAPE, CLASSES)
