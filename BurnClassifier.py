@@ -40,5 +40,5 @@ def main():
 
 #steps: table -> imgs -> train -> test
 if __name__ == "__main__":
-"""Commands: python BurnClassifier.py create | train | test"""
+    """Commands: python BurnClassifier.py create | train | test"""
     main()
