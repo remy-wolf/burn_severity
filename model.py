@@ -67,7 +67,7 @@ def initModel(keep_prob, input_shape):
 
 
 
-def train(model, dir, input_shape, classes, num_samples, batch_size, learningRate, epochs, weights):
+def train(model, data_dir, input_shape, classes, num_samples, batch_size, learningRate, epochs, weights):
     # plot_model(model, to_file='model.png')
     # [no_damage, damage]
     #y = to_categorical(y, num_classes=2)
@@ -81,7 +81,7 @@ def train(model, dir, input_shape, classes, num_samples, batch_size, learningRat
         height_shift_range = 0.1,
         horizontal_flip = True,
         vertical_flip = True).flow_from_directory(
-        directory = dir + "train_imgs/",
+        directory = os.path.join(data_dir, "train_imgs/")
         target_size = (input_shape[0], input_shape[1]),
         classes = classes,
         batch_size = batch_size)
@@ -93,7 +93,7 @@ def train(model, dir, input_shape, classes, num_samples, batch_size, learningRat
         height_shift_range = 0.1,
         horizontal_flip = True,
         vertical_flip = True).flow_from_directory(
-        directory = dir + "valid_imgs/",
+        directory = os.path.join(data_dir, "valid_imgs/")
         target_size = (input_shape[0], input_shape[1]),
         classes = classes,
         batch_size = batch_size)

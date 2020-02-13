@@ -6,7 +6,7 @@ import sys
 
 def main():
     model = initModel(0.5, INPUT_SHAPE)
-    train(model, dir = DATA_FOLDER, input_shape = INPUT_SHAPE, classes = CLASSES, num_samples = NUM_SAMPLES, batch_size = BATCH_SIZE, learningRate = LEARNING_RATE, epochs = NUM_EPOCHS, weights = WEIGHTS)
+    train(model, data_dir = DATA_FOLDER, input_shape = INPUT_SHAPE, classes = CLASSES, num_samples = NUM_SAMPLES, batch_size = BATCH_SIZE, learningRate = LEARNING_RATE, epochs = NUM_EPOCHS, weights = WEIGHTS)
     # Input parameters
 
     # Set working directory where files are located
