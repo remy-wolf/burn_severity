@@ -1,5 +1,5 @@
 import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #import tensorflow as tf
 from keras.layers import Lambda, Conv2D, Dropout, Dense, Flatten
 from keras.callbacks import ModelCheckpoint
@@ -7,7 +7,6 @@ from keras import regularizers, optimizers, Sequential
 from math import ceil
 import numpy as np
 from keras.utils import to_categorical, plot_model
-from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.utils import class_weight
 from sklearn.metrics import roc_curve
@@ -15,6 +14,8 @@ from keras.models import load_model
 from keras import regularizers
 import matplotlib.pyplot as plt
 
+from MakeBatches import makeBatches
+from Constants import DATASETS
 
 def plotTrainingHistory(history):
     # Plot training & validation accuracy values
@@ -34,9 +35,6 @@ def plotTrainingHistory(history):
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.show()
-
-
-
 
 def initModel(keep_prob, input_shape):
     # Create the neural network model for the problem
@@ -62,44 +60,13 @@ def initModel(keep_prob, input_shape):
     model.add(Dense(2, activation="softmax"))
 
     return model
-
-
-
-
-
+    
 def train(model, data_dir, input_shape, classes, num_samples, batch_size, learningRate, epochs, weights):
     # plot_model(model, to_file='model.png')
-    # [no_damage, damage]
-    #y = to_categorical(y, num_classes=2)
     steps_per_epoch = ceil(num_samples/batch_size)
 
-    # Image augmentation for adding varied image data to the set
-    train_batches = ImageDataGenerator(
-        #featurewise_center = True,
-        rotation_range = 15,
-        width_shift_range = 0.1,
-        height_shift_range = 0.1,
-        horizontal_flip = True,
-        vertical_flip = True).flow_from_directory(
-        directory = os.path.join(data_dir, "train_imgs/")
-        target_size = (input_shape[0], input_shape[1]),
-        classes = classes,
-        batch_size = batch_size)
-
-    valid_batches = ImageDataGenerator(
-        #featurewise_center = True,
-        rotation_range = 15,
-        width_shift_range = 0.1,
-        height_shift_range = 0.1,
-        horizontal_flip = True,
-        vertical_flip = True).flow_from_directory(
-        directory = os.path.join(data_dir, "valid_imgs/")
-        target_size = (input_shape[0], input_shape[1]),
-        classes = classes,
-        batch_size = batch_size)
-        
-    # compute quantities required for featurewise normalization
-    # (std, mean, and principal components if ZCA whitening is applied)
+    train_batches = makeBatches(DATASETS["train"], classes, input_shape, batch_size)
+    valid_batches = makeBatches(DATASETS["valid"], classes, input_shape, batch_size)
 
     # Get input and compile
     checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
@@ -120,7 +87,6 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
 
     plotTrainingHistory(history)
 
-
 def plotROC(testy, lr_probs):
     lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)
     plt.plot(lr_fpr, lr_tpr, marker='.', label='ROC')
@@ -132,9 +98,7 @@ def plotROC(testy, lr_probs):
     plt.legend()
     # show the plot
     plt.show()
-
-
-
+    
 def runPredictions(prediction,y):
     predictionSetSize = len(prediction)
     numCorrect = 0
@@ -159,7 +123,6 @@ def runPredictions(prediction,y):
     print(numNotDamagedCorrect, "not damaged correct out of", numNotDamaged, "\naccuracy: ",
           100 * numNotDamagedCorrect / numNotDamaged)
 
-
 def getClassifications(prediction, y):
     p=[]
     yout=[]
@@ -168,7 +131,6 @@ def getClassifications(prediction, y):
         yout.append(y[i][1])
 
     return yout,p
-
 
 def runModel(workingDir, x_test, y_test, x_train, y_train):
     filePath = workingDir+"\\model-20.h5"

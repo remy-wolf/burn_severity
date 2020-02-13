@@ -1,5 +1,6 @@
-from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER
 import ee
+
+from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER
 
 def bufferPoints(feature):
     """

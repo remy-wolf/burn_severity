@@ -1,12 +1,12 @@
-from Extract import makeAndUploadData
-from model import initModel, train, runModel
-#from ProcessImage import readData, makeBatch
-from Constants import DATA_FOLDER, INPUT_SHAPE, CLASSES, NUM_SAMPLES, BATCH_SIZE, LEARNING_RATE, NUM_EPOCHS, WEIGHTS
 import sys
+
+from Extract import makeAndUploadData
+from Model import initModel, train, runModel
+from Constants import DATA_FOLDER, INPUT_SHAPE, CLASSES, NUM_SAMPLES, BATCH_SIZE, LEARNING_RATE, NUM_EPOCHS, WEIGHTS
 
 def main():
     model = initModel(0.5, INPUT_SHAPE)
-    train(model, data_dir = DATA_FOLDER, input_shape = INPUT_SHAPE, classes = CLASSES, num_samples = NUM_SAMPLES, batch_size = BATCH_SIZE, learningRate = LEARNING_RATE, epochs = NUM_EPOCHS, weights = WEIGHTS)
+    train(model, DATA_FOLDER, INPUT_SHAPE, CLASSES, NUM_SAMPLES, BATCH_SIZE, LEARNING_RATE, NUM_EPOCHS, WEIGHTS)
     # Input parameters
 
     # Set working directory where files are located

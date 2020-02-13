@@ -3,3 +3,4 @@ data/
 legacy/
 graphs/
 h5/
+*.h5

@@ -1,8 +1,9 @@
-from Constants import INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
 import xmltodict
 import os
 import numpy as np
 from PIL import Image
+
+from Constants import INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
 
 #linear interpolation
 
