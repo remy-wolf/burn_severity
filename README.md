@@ -16,4 +16,4 @@ python CreateImgs.py
 
 ### To run the model:
 python BurnClassifier.py
-* Hyper-parameters can be found in Constants.py. Currently, the validation loss/accuracy do not seem to be converging.# Structure_Burn_Severity
+* Hyper-parameters can be found in Constants.py. Currently, the validation loss/accuracy do not seem to be converging.
