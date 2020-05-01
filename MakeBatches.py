@@ -27,8 +27,7 @@ def makeBatches(dataset, classes, input_shape, batch_size):
     imgs = np.array(imgs).reshape(-1, input_shape[0], input_shape[1], input_shape[2])
     labels = to_categorical(labels)
     batches = ImageDataGenerator(
-        featurewise_center = True,
-        rotation_range = 15,
+        samplewise_center = True,
         width_shift_range = 0.1,
         height_shift_range = 0.1,
         horizontal_flip = True,
@@ -41,5 +40,4 @@ def makeBatches(dataset, classes, input_shape, batch_size):
         y = labels,
         batch_size = batch_size,
         shuffle = True)
-    
     return batches

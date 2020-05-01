@@ -1,7 +1,7 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #import tensorflow as tf
-from keras.layers import Lambda, Conv2D, Dropout, Dense, Flatten
+from keras.layers import Lambda, Conv2D, Dense, Flatten, MaxPooling2D
 from keras.callbacks import ModelCheckpoint
 from keras import regularizers, optimizers, Sequential
 from math import ceil
@@ -41,23 +41,30 @@ def initModel(keep_prob, input_shape):
 
     model = Sequential()
     model.add(Lambda(lambda x: x / 127.5 - 1, input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation="elu", strides=(2, 2), data_format='channels_last'))
-    model.add(Conv2D(64, (3, 3), activation="elu", strides=(2, 2)))
-    model.add(Dropout(keep_prob))
-    model.add(Conv2D(64, (3, 3), activation="elu"))
-    model.add(Conv2D(64, (3, 3), activation="elu"))
-    model.add(Dropout(keep_prob))
-    model.add(Conv2D(64, (3, 3), activation="elu"))
-    model.add(Conv2D(64, (3, 3), activation="elu"))
-    model.add(Dropout(keep_prob))
-
+    # 128x128
+    model.add(Conv2D(64, (3, 3), activation="relu", padding='same'))
+    model.add(Conv2D(64, (3, 3), activation="relu", padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # 64x64
+    model.add(Conv2D(128, (3, 3), activation="relu", padding='same'))
+    model.add(Conv2D(128, (3, 3), activation="relu", padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # 32x32
+    model.add(Conv2D(256, (3, 3), activation="relu", padding='same'))
+    model.add(Conv2D(256, (3, 3), activation="relu", padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # 16x16
+    model.add(Conv2D(512, (3, 3), activation="relu", padding='same'))
+    model.add(Conv2D(512, (3, 3), activation="relu", padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # 8x8
+    model.add(Conv2D(512, (3, 3), activation="relu", padding='same'))
+    model.add(Conv2D(512, (3, 3), activation="relu", padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # 4x4
     model.add(Flatten())
-    model.add(Dense(200, activation="elu", use_bias=True))
-    model.add(Dropout(keep_prob))
-    model.add(Dense(100, activation="elu", use_bias=True))
-    model.add(Dense(100, activation="elu", use_bias=True))
-    model.add(Dense(10, activation="elu", use_bias=True))
-    model.add(Dense(2, activation="softmax"))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dense(2, activation='softmax'))
 
     return model
     
@@ -81,11 +88,13 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
                         train_batches,
                         steps_per_epoch = steps_per_epoch,
                         epochs = epochs,
+                        verbose = 1,
                         class_weight=weights,
-                        validation_data=valid_batches,
-                        callbacks=[checkpoint])
+                        validation_data=valid_batches
+                        )
+                        #callbacks=[checkpoint])
 
-    plotTrainingHistory(history)
+    #plotTrainingHistory(history)
 
 def plotROC(testy, lr_probs):
     lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)

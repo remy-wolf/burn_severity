@@ -5,13 +5,14 @@ DATA_FOLDER = "data/"
 DRIVE_FOLDER = "deep_gis"
 
 # keras inputs
-INPUT_SHAPE = (169, 169, 3)
+IMG_SIZE = (169, 169)
+INPUT_SHAPE = (128, 128, 3)
 CLASSES = ['no_damage', 'damage']
 WEIGHTS = [10, 1]
-BATCH_SIZE = 128
-LEARNING_RATE = 5e-5
-NUM_EPOCHS = 100
-NUM_SAMPLES = 5000
+BATCH_SIZE = 10
+LEARNING_RATE = 3e-4
+NUM_EPOCHS = 20
+NUM_SAMPLES = 20
 
 # earth engine assets
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"
@@ -23,9 +24,9 @@ TRAINING = {
     "filename": "train_table",
     "polygon": [
     [-121.61246009040491, 39.76224814367828],
-    [-121.59046597648279, 39.76224814367828],
-    [-121.59046597648279, 39.76652011837134],
-    [-121.61246009040491, 39.76652011837134],
+    [-121.58194701473388, 39.76224814367828],
+    [-121.58194701473388, 39.752221128885004],
+    [-121.61246009040491, 39.752221128885004],
     [-121.61246009040491, 39.76224814367828]],
     "dest_folder": os.path.join(DATA_FOLDER, "train_imgs/")
 }
