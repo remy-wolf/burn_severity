@@ -14,9 +14,10 @@ LEARNING_RATE = 3e-4
 NUM_EPOCHS = 20
 NUM_SAMPLES = 5000
 
-# earth engine assets
+# earth engine assets/inputs
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"
 POINTS = "users/geofffricker/PostFirePoints"
+BUFFER_SIZE = 30
 
 # information needed to generate the datasets
 TRAINING = {
