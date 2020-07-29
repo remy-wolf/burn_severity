@@ -72,9 +72,9 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
     # plot_model(model, to_file='model.png')
     steps_per_epoch = ceil(num_samples/batch_size)
 
-    train_batches = makeBatches(DATASETS["train"], classes, input_shape, batch_size)
-    valid_batches = makeBatches(DATASETS["valid"], classes, input_shape, batch_size)
-
+    #train_batches = makeBatches(DATASETS["train"], classes, input_shape, batch_size)
+    #valid_batches = makeBatches(DATASETS["valid"], classes, input_shape, batch_size)
+    train_batches, valid_batches = makeBatches(classes, input_shape, batch_size)
     # Get input and compile
     checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
 
@@ -89,9 +89,8 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
                         steps_per_epoch = steps_per_epoch,
                         epochs = epochs,
                         verbose = 1,
-                        class_weight=weights,
-                        validation_data=valid_batches
-                        )
+                        class_weight = weights,
+                        validation_data = valid_batches)
                         #callbacks=[checkpoint])
 
     #plotTrainingHistory(history)

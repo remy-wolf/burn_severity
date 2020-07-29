@@ -15,8 +15,8 @@ def loadImgs(folder, classes):
             data.append([img_array, label])
     return data
 
-def makeBatches(dataset, classes, input_shape, batch_size):
-    data = loadImgs(dataset["dest_folder"], classes)
+def makeBatches(classes, input_shape, batch_size):
+    data = loadImgs("data/imgs/", classes)
     
     imgs = []
     labels = []
@@ -26,18 +26,28 @@ def makeBatches(dataset, classes, input_shape, batch_size):
         
     imgs = np.array(imgs).reshape(-1, input_shape[0], input_shape[1], input_shape[2])
     labels = to_categorical(labels)
-    batches = ImageDataGenerator(
+    datagen = ImageDataGenerator(
         samplewise_center = True,
         width_shift_range = 0.1,
         height_shift_range = 0.1,
         horizontal_flip = True,
-        vertical_flip = True)
+        vertical_flip = True,
+        validation_split=0.1)
     
-    batches.fit(imgs)
+    datagen.fit(imgs)
     
-    batches = batches.flow(
+    train_batches = datagen.flow(
         x = imgs,
         y = labels,
         batch_size = batch_size,
-        shuffle = True)
-    return batches
+        shuffle = True,
+        subset = 'training')
+    
+    valid_batches = datagen.flow(
+        x = imgs,
+        y = labels,
+        batch_size = batch_size,
+        shuffle = True,
+        subset = 'validation')
+
+    return train_batches, valid_batches

@@ -12,7 +12,7 @@ WEIGHTS = [10, 1]
 BATCH_SIZE = 10
 LEARNING_RATE = 3e-4
 NUM_EPOCHS = 20
-NUM_SAMPLES = 5000
+NUM_SAMPLES = 20000
 
 # earth engine assets/inputs
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"
