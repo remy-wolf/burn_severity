@@ -15,8 +15,8 @@ def loadImgs(folder, classes):
             data.append([img_array, label])
     return data
 
-def makeBatches(classes, input_shape, batch_size):
-    data = loadImgs("data/imgs/", classes)
+def makeBatch(folder, classes, input_shape, batch_size):
+    data = loadImgs(folder, classes)
     
     imgs = []
     labels = []
@@ -31,23 +31,14 @@ def makeBatches(classes, input_shape, batch_size):
         width_shift_range = 0.1,
         height_shift_range = 0.1,
         horizontal_flip = True,
-        vertical_flip = True,
-        validation_split=0.1)
+        vertical_flip = True)
     
     datagen.fit(imgs)
     
-    train_batches = datagen.flow(
+    batches = datagen.flow(
         x = imgs,
         y = labels,
         batch_size = batch_size,
-        shuffle = True,
-        subset = 'training')
-    
-    valid_batches = datagen.flow(
-        x = imgs,
-        y = labels,
-        batch_size = batch_size,
-        shuffle = True,
-        subset = 'validation')
+        shuffle = True)
 
-    return train_batches, valid_batches
+    return batches

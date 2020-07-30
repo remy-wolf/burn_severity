@@ -14,7 +14,7 @@ from keras.models import load_model
 from keras import regularizers
 import matplotlib.pyplot as plt
 
-from MakeBatches import makeBatches
+from MakeBatches import makeBatch
 from Constants import DATASETS
 
 def plotTrainingHistory(history):
@@ -74,7 +74,10 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
 
     #train_batches = makeBatches(DATASETS["train"], classes, input_shape, batch_size)
     #valid_batches = makeBatches(DATASETS["valid"], classes, input_shape, batch_size)
-    train_batches, valid_batches = makeBatches(classes, input_shape, batch_size)
+    train_folder = os.path.join(DATA_FOLDER, "split_imgs/train/")
+    valid_folder = os.path.join(DATA_FOLDER, "split_imgs/val/")
+    train_batches = makeBatch(train_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
+    valid_batches = makeBatch(valid_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
     # Get input and compile
     checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
 

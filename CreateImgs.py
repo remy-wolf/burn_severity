@@ -1,9 +1,10 @@
 import xmltodict
 import os
 import numpy as np
+import split_folders
 from PIL import Image
 
-from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
+from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES, DATA_SPLIT
 
 #linear interpolation
 
@@ -23,6 +24,7 @@ def processKML(data, img_size, target_size, classes):
         for img in table:
             createImg(img, dest_folder, img_size, target_size, classes)
         kml.close()
+    split_folders.ratio(dest_folder, os.path.join(DATA_FOLDER, "split_imgs/"), ratio=DATA_SPLIT)
  
 def createImg(img_data, dest_folder, img_size, target_size, classes):
     bands = np.empty(target_size[2], dtype = np.object)
