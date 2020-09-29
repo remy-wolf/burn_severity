@@ -14,8 +14,9 @@ from keras.models import load_model
 from keras import regularizers
 import matplotlib.pyplot as plt
 
-from MakeBatches import makeBatch
-from Constants import DATASETS
+from MakeBatches import makeBatches
+#from Constants import DATA_FOLDER
+#from Constants import DATASETS
 
 def plotTrainingHistory(history):
     # Plot training & validation accuracy values
@@ -74,26 +75,35 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
 
     #train_batches = makeBatches(DATASETS["train"], classes, input_shape, batch_size)
     #valid_batches = makeBatches(DATASETS["valid"], classes, input_shape, batch_size)
-    train_folder = os.path.join(DATA_FOLDER, "split_imgs/train/")
-    valid_folder = os.path.join(DATA_FOLDER, "split_imgs/val/")
-    train_batches = makeBatch(train_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
-    valid_batches = makeBatch(valid_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
+    #train_folder = os.path.join(DATA_FOLDER, "split_imgs/train/")
+    #valid_folder = os.path.join(DATA_FOLDER, "split_imgs/val/")
+    #train_batches = makeBatch(train_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
+    #valid_batches = makeBatch(valid_folder, CLASSES, INPUT_SHAPE, BATCH_SIZE)
+    
+    train_batches, valid_batches = makeBatches(data_dir, classes, input_shape, batch_size)
+    
+    while(True):
+        print(next(train_batches))
+        print()
+        print(next(valid_batches))
+        print()
+        x=input()
     # Get input and compile
-    checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
+    #checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
 
 
-    model.compile(loss ='categorical_crossentropy',
-                  optimizer = optimizers.Adam(lr=learningRate),
-                  metrics=['acc'])
+    #model.compile(loss ='categorical_crossentropy',
+    #              optimizer = optimizers.Adam(lr=learningRate),
+    #              metrics=['acc'])
 
     # Set model hyper-parameters and train
-    history = model.fit_generator(
-                        train_batches,
-                        steps_per_epoch = steps_per_epoch,
-                        epochs = epochs,
-                        verbose = 1,
-                        class_weight = weights,
-                        validation_data = valid_batches)
+    #history = model.fit_generator(
+    #                    train_batches,
+    #                    steps_per_epoch = steps_per_epoch,
+    #                    epochs = epochs,
+    #                    verbose = 1,
+    #                    class_weight = weights,
+    #                    validation_data = valid_batches)
                         #callbacks=[checkpoint])
 
     #plotTrainingHistory(history)

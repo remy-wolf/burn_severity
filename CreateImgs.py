@@ -19,11 +19,11 @@ from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES, DAT
 def processKML(data, img_size, target_size, classes):
     kml_file = os.path.join(DATA_FOLDER, data) + ".kml"
     dest_folder = os.path.join(DATA_FOLDER, "imgs/")
-    with open(kml_file) as kml:
-        table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
-        for img in table:
-            createImg(img, dest_folder, img_size, target_size, classes)
-        kml.close()
+    #with open(kml_file) as kml:
+    #    table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
+    #    for img in table:
+    #        createImg(img, dest_folder, img_size, target_size, classes)
+    #    kml.close()
     split_folders.ratio(dest_folder, os.path.join(DATA_FOLDER, "split_imgs/"), ratio=DATA_SPLIT)
  
 def createImg(img_data, dest_folder, img_size, target_size, classes):

@@ -12,7 +12,7 @@ WEIGHTS = [10, 1]
 BATCH_SIZE = 10
 LEARNING_RATE = 3e-4
 NUM_EPOCHS = 20
-NUM_SAMPLES = 20000
+NUM_SAMPLES = 1000
 DATA_SPLIT = (0.9, 0.1)
 
 # earth engine assets/inputs
