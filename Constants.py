@@ -9,11 +9,10 @@ IMG_SIZE = (169, 169)
 INPUT_SHAPE = (128, 128, 3)
 CLASSES = ['no_damage', 'damage']
 WEIGHTS = [10, 1]
-BATCH_SIZE = 10
+BATCH_SIZE = 20
 LEARNING_RATE = 3e-4
 NUM_EPOCHS = 20
-NUM_SAMPLES = 1000
-DATA_SPLIT = (0.9, 0.1)
+NUM_SAMPLES = 16000
 
 # earth engine assets/inputs
 AERIAL_IMG = "users/brendanpalmieri/aerialMosaic_resample_int16"

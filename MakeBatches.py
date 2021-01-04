@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
+import random
 
 def loadImgs(folder, classes):
     data = []
@@ -17,7 +18,10 @@ def loadImgs(folder, classes):
 
 def makeBatches(folder, classes, input_shape, batch_size):
     data = loadImgs(folder, classes)
-    
+    random.shuffle(data)
+	 # pre-shuffle data due to bug when using validation_split in ImageDataGenerator
+	 # if we don't, training & validation batches have imbalanced ratio of classes
+
     imgs = []
     labels = []
     for img, label in data:
@@ -41,7 +45,7 @@ def makeBatches(folder, classes, input_shape, batch_size):
         y = labels,
         batch_size = batch_size,
         shuffle = True,
-        subset = "training")
+		  subset = "training")
     
     valid_batches = datagen.flow(
         x = imgs,
