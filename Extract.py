@@ -1,6 +1,7 @@
 import ee
+import math
 
-from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER
+from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER, BUFFER_SIZE, POLYGON
 
 def bufferPoints(feature):
     """
@@ -13,7 +14,7 @@ def bufferPoints(feature):
             a bounding box for each feature
     """
 
-    return feature.buffer(30).bounds()
+    return feature.buffer(BUFFER_SIZE).bounds()
 
 def setDamage0(feature):
     return feature.set('damage',0)
@@ -56,11 +57,22 @@ def clipImgs(feature):
                 .set('damage', feature.getNumber('damage')))
                 
 
-def makeAndUploadData(points, folder, dataset):
-    ee.Initialize()
-    polygon = ee.Geometry.Polygon(dataset["polygon"])
-    points = filterPoints(ee.FeatureCollection(points), polygon)
-    startEEImageQueue(points, folder, dataset["filename"])
+def makeAndUploadData(polygon, points, folder, name):
+    points = filterPoints(points, polygon) 
+    startEEImageQueue(points, folder, name)
 
+# buffer the image by -sqrt(2) * the buffer size to ensure no part of the buffered points extends beyond the image boundaries
+def makeViaImage(image, points, folder):
+    polygon = image.geometry.buffer(math.sqrt(2) * -1 * BUFFER_SIZE)
+    name = "data_table"
+    makeAndUploadData(polygon, points, folder, name)
+    
+def makeViaPolygon(polygon, points, folder):
+    polygon = ee.FeatureCollection(polygon).geometry().buffer(math.sqrt(2) * -1 * BUFFER_SIZE)
+    name = "data_table"
+    makeAndUploadData(polygon, points, folder, name)
+    
 if __name__ == "__main__":
-    makeAndUploadData(POINTS, DRIVE_FOLDER, DATASETS["train"])
+    ee.Initialize()
+    points = ee.FeatureCollection(POINTS)
+    makeViaPolygon(POLYGON, points, DRIVE_FOLDER)

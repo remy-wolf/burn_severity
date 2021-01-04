@@ -1,11 +1,10 @@
 import xmltodict
 import os
 import numpy as np
+import split_folders
 from PIL import Image
 
 from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
-
-#linear interpolation
 
 """ Each band is a (roughly) 170 x 170 matrix of pixels. In the .kml file, this is stored as a string.
     We want to convert this string to a numpy array and then save it as an image.
@@ -15,16 +14,17 @@ from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
     
     #right now we assume the data is formatted nicely. may need to add error checking in the future
     
-def processKML(dataset, img_size, input_shape, classes):
-    kml_file = os.path.join(DATA_FOLDER, dataset["filename"]) + ".kml"
+def processKML(data, img_size, target_size, classes):
+    kml_file = os.path.join(DATA_FOLDER, data) + ".kml"
+    dest_folder = os.path.join(DATA_FOLDER, "imgs/")
     with open(kml_file) as kml:
         table = xmltodict.parse(kml.read())['kml']['Document']['Placemark']
         for img in table:
-            createImg(img, dataset["dest_folder"], img_size, input_shape, classes)
+            createImg(img, dest_folder, img_size, target_size, classes)
         kml.close()
  
-def createImg(img_data, dest_folder, img_size, input_shape, classes):
-    bands = np.empty(input_shape[2], dtype = np.object)
+def createImg(img_data, dest_folder, img_size, target_size, classes):
+    bands = np.empty(target_size[2], dtype = np.object)
     for cur_band in range(len(bands)):
         data = img_data['ExtendedData']['Data'][cur_band + 2]['value'] # the original unformatted string from the kml file
         band = np.empty((img_size[0], img_size[1]), dtype = np.uint8)
@@ -42,7 +42,7 @@ def createImg(img_data, dest_folder, img_size, input_shape, classes):
     img_folder = os.path.join(dest_folder, classes[int(img_data['ExtendedData']['Data'][1]['value'])]) # place image into no_damage and damage folders
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
-    Image.fromarray(img_array).resize((input_shape[0], input_shape[1])).save(os.path.join(img_folder, img_data['ExtendedData']['Data'][0]['value']) + ".jpeg") # id of the image
+    Image.fromarray(img_array).resize((target_size[0], target_size[1])).save(os.path.join(img_folder, img_data['ExtendedData']['Data'][0]['value']) + ".jpeg") # id of the image
     
 if __name__ == "__main__":
-    processKML(DATASETS["train"], IMG_SIZE, INPUT_SHAPE, CLASSES)
+    processKML("data_table", IMG_SIZE, INPUT_SHAPE, CLASSES)
