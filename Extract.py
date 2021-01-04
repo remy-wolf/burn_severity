@@ -3,7 +3,6 @@ import math
 
 from Constants import AERIAL_IMG, POINTS, DATASETS, DRIVE_FOLDER, BUFFER_SIZE, POLYGON
 
-# can probably combine both maps into one to save a bit of time
 def bufferPoints(feature):
     """
     This function is called by ee.FeatureCollection.map() to process each Feature
@@ -72,11 +71,6 @@ def makeViaPolygon(polygon, points, folder):
     polygon = ee.FeatureCollection(polygon).geometry().buffer(math.sqrt(2) * -1 * BUFFER_SIZE)
     name = "data_table"
     makeAndUploadData(polygon, points, folder, name)
-    
-def makeViaDataset(dataset, points, folder):
-    polygon = ee.Geometry.Polygon(dataset["polygon"])
-    name = dataset["filename"]
-    makeAndUploadData(polygon, points, folder)
     
 if __name__ == "__main__":
     ee.Initialize()

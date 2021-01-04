@@ -6,8 +6,6 @@ from PIL import Image
 
 from Constants import IMG_SIZE, INPUT_SHAPE, DATASETS, DATA_FOLDER, CLASSES
 
-#linear interpolation
-
 """ Each band is a (roughly) 170 x 170 matrix of pixels. In the .kml file, this is stored as a string.
     We want to convert this string to a numpy array and then save it as an image.
     Some of the images are slightly less or slightly more than 170 pixels in a given dimension, so we

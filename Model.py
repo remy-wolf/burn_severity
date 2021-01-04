@@ -75,8 +75,6 @@ def train(model, data_dir, input_shape, classes, num_samples, batch_size, learni
     
     # Get input and compile
     #checkpoint = ModelCheckpoint('model-{epoch:02d}.h5',monitor='val_loss',verbose=0, save_best_only=False,mode='auto')
-
-
     model.compile(loss ='categorical_crossentropy',
                   optimizer = optimizers.Adam(lr=learningRate),
                   metrics=['acc'])
