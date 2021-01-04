@@ -13,3 +13,17 @@ python CreateImgs.py
 ### To run the model:
 python BurnClassifier.py
 * Hyper-parameters can be found in Constants.py.
+
+Sample image of undamaged building:
+
+![Undamaged Building](example_imgs/example_undamaged.jpeg?raw=true "Undamaged")
+
+
+Sample image of damaged building:
+
+![Damaged Building](example_imgs/example_damaged.jpeg?raw=true "Damaged")
+
+
+Sample training run (peak validation accuracy of 0.9750):
+
+![Training Run](example_imgs/sample_training_run.png?raw=true "Training run")
