@@ -1,5 +1,7 @@
 # Structure_Burn_Severity
 
+Our goal with this project was to train a neural network to automatically classify structures as either damaged or undamaged. This project uses aerial imagery from Paradise, CA after the Camp Fire devastated the area in 2018 and a set of points denoting the location of structures. Using Google Earth Engine, we clip a small region from the imagery around each point to create the training and validation sets, then create a model using Keras/Tensorflow and train it using the data we generated.
+
 ### To set up data:
 
 python Extract.py
