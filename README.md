@@ -26,4 +26,4 @@ Sample image of damaged building:
 
 Sample training run (peak validation accuracy of 0.9750):
 
-![Training Run](example_imgs/sample_training_run.png?raw=true "Training run")
+![Training Run](example_imgs/sample_training_run.PNG?raw=true "Training run")
